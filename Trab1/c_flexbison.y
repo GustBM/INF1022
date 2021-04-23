@@ -7,7 +7,7 @@ int yyerror(char *s);
 %}
 
 %token STRING NUM 
-%token ADD SUB MUL DIV
+%token ADD SUB MUL DIV ABS
 %token SEMICOLON
 %token INT
 %token OTHER 
@@ -22,6 +22,24 @@ int yyerror(char *s);
 
 %%
 
+exp: factor       { $$ = $1;}
+ | exp ADD factor { $$ = $1 + $3; }
+ | exp SUB factor { $$ = $1 - $3; }
+ ;
+
+factor: term       { $$ = $1;} 
+ | factor MUL term { $$ = $1 * $3; }
+ | factor DIV term { $$ = $1 / $3; }
+ ;
+
+term: NUMBER  { $$ = $1;} 
+ | ABS term   { $$ = $2 >= 0? $2 : - $2; }
+;
+
+COMANDO = ...
+|...
+| INT IDENT = exp ; 
+
 prog:
   stmts
 ;
@@ -30,14 +48,7 @@ stmts:
 		| stmt SEMICOLON stmts
 
 stmt:
-		STRING {
-				printf("Your entered a string - %s", $1);
-		}
-		| NUM {
-				printf("The number you entered is - %d", $1);
-		}
-		| OTHER
-;
+		
 
 %%
 

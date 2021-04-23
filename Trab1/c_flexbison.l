@@ -11,10 +11,13 @@ alpha       ([a-zA-Z])+
 
 %%
 
+\n      return(EOL);
+"|"    { return ABS; }
 "+"    { return ADD; }
 "-"    { return SUB; }
 "*"    { return MUL; }
 "/"    { return DIV; }
+"="     return(EQ);
 "int" {return INT;}
 {alpha}		{sscanf(yytext, "%s", yylval.name); return (STRING);}
 {numbers}	{yylval.number = atoi(yytext); return (NUM);}
