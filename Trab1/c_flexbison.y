@@ -6,7 +6,11 @@ int yyerror(char *s);
 
 %}
 
-%token STRING NUM OTHER SEMICOLON
+%token STRING NUM 
+%token ADD SUB MUL DIV
+%token SEMICOLON
+%token INT
+%token OTHER 
 
 %type <name> STRING
 %type <number> NUM
