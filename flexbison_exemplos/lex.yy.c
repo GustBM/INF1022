@@ -447,9 +447,23 @@ char *yytext;
 #line 1 "calculadora.l"
 #line 2 "calculadora.l"
 #include <stdio.h>
-#include "calculadora.tab.h"
-#line 452 "lex.yy.c"
-#line 453 "lex.yy.c"
+
+/* Token type.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    EXP = 258,
+    SOMA = 259,
+    SUB = 260,
+    EQ = 261,
+    FIM_LINHA = 262,
+    MULT = 263,
+    DIV = 264
+  };
+#endif
+#line 466 "lex.yy.c"
+#line 467 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -666,10 +680,10 @@ YY_DECL
 		}
 
 	{
-#line 6 "calculadora.l"
+#line 20 "calculadora.l"
 
 
-#line 673 "lex.yy.c"
+#line 687 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -728,56 +742,56 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 8 "calculadora.l"
+#line 22 "calculadora.l"
 { printf("lido %s\n",yytext);yylval=atoi(yytext); return(EXP); }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 9 "calculadora.l"
+#line 23 "calculadora.l"
 return(FIM_LINHA);
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 10 "calculadora.l"
+#line 24 "calculadora.l"
 return(SOMA);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 11 "calculadora.l"
+#line 25 "calculadora.l"
 return(SUB);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 12 "calculadora.l"
+#line 26 "calculadora.l"
 return(MULT);
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 13 "calculadora.l"
+#line 27 "calculadora.l"
 return(DIV);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 14 "calculadora.l"
+#line 28 "calculadora.l"
 return(EQ);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 15 "calculadora.l"
+#line 29 "calculadora.l"
 return(0);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 16 "calculadora.l"
+#line 30 "calculadora.l"
 ;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 18 "calculadora.l"
+#line 32 "calculadora.l"
 ECHO;
 	YY_BREAK
-#line 781 "lex.yy.c"
+#line 795 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1782,15 +1796,13 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 18 "calculadora.l"
+#line 32 "calculadora.l"
 
 
-/* descomente caso queira usar o lex sem o yacc
 int main()
 {
 	yylex();
 	printf("processando lex");
 }
-*/
 
 int yywrap() {}

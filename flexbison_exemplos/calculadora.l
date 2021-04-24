@@ -1,6 +1,20 @@
 %{
 #include <stdio.h>
-#include "calculadora.tab.h"
+
+/* Token type.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    EXP = 258,
+    SOMA = 259,
+    SUB = 260,
+    EQ = 261,
+    FIM_LINHA = 262,
+    MULT = 263,
+    DIV = 264
+  };
+#endif
 %}
 
 %%
@@ -17,12 +31,10 @@ fim    return(0);
 
 %%
 
-/* descomente caso queira usar o lex sem o yacc
 int main()
 {
 	yylex();
 	printf("processando lex");
 }
-*/
 
 int yywrap() {}
