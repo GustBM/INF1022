@@ -27,7 +27,7 @@
 %token ZERA
 %token EQ
 
-%token <name> ID
+%token <name> id
 %type <number> program
 %type <number> varlist
 %type <number> cmds
@@ -40,15 +40,15 @@ program : ENTRADA varlist SAIDA varlist cmds FIM
 
 };
 
-varlist : varlist ID {} 
-    | ID {$$ = $1;}
+varlist : varlist id {} 
+    | id {$$ = $1;}
     ;
 
 cmds : cmds cmd {}
     | cmd { $$ = $1; }
     ;
 
-cmd : ENQUANTO ID FACA cmds FIM {};
+cmd : ENQUANTO id FACA cmds FIM {};
 
 %%
 
