@@ -1,29 +1,21 @@
-%{
-  #include <stdio.h>
-  #include "provol-One.tab.h"
-
-  void showError();
-
-%}
-%option noyywrap
-%%
-ENTRADA         { return ENTRADA;}
-SAIDA           { return SAIDA; }
-FIM             { return FIM; }
-FACA            { return FACA; }
-ENQUANTO        { return ENQUANTO; }
-SE              { return SE; }
-ENTAO           { return ENTAO; }
-SENAO           { return SENAO; }
-INC             { return INC; }
-ZERA            { return ZERA; }
-ABREPAR         { return ABREPAR; }
-FECHAPAR        { return FECHAPAR; }
-[a-zA-Z]+       { yylval.content=strdup(yytext); return ID;}
-"="             { return IGUAL;}
-.               { showError();}
+%option yywrap
+    #include <stdio.h>
+    #include "y.tab.h"
 %%
 
-void showError(){
-  printf("Other input\n");
-}
+ENTRADA     return (ENTRADA);
+SAIDA       return (SAIDA);
+FACA        return (FACA);
+INC         return (INC);
+ZERA        return (ZERA);
+FIM         return (FIM);
+VEZES       return (VEZES);
+SE          return (SE);
+SENAO       return (SENAO);
+ENQUANTO    return (ENQUANTO);
+"("         return (APAR);
+")"         return (FPAR);
+"="         return (IGUAL);
+#.*         {/* comentario */}
+[a-zA-Z]    {yylval.sval =strdup(yytext); return (ID);}
+[ /t]       {}
