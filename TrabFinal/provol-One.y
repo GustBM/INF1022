@@ -41,7 +41,6 @@ program : ENTRADA varlist SAIDA varlist cmds FIM
 	char* saidas = $4
 	char* varEntrada = strtok(entradas, " ");
 	int i=0;
-	int argumentosEntrada[argc];
 	while (varEntrada != NULL) {
                        
                         fprintf(outFile, "int %s;\n", varEntrada);                   
@@ -68,14 +67,15 @@ cmds : cmds cmd {}
 
 cmd : ENQUANTO id FACA cmds FIM {
 
-};
+   }
    |ID IGUAL ID { 
-        e->linha.var1 = $1;
-        e->linha.var2 = $3;
-        e->linha.comando = COMANDO_ATRIBUICAO;
-        $$ = e;
-    }
-
+        
+	fprintf(outFile, "%s = %s;\n", $1, $3);
+   }
+   |INC ABREPAR ID FECHAPAR{
+   	fprintf(outFile, "%s++",$3);
+   }
+;
 %%
 
 int yyerror(char *s)
