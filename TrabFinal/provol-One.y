@@ -55,7 +55,6 @@
     extern FILE *yyin;      
     extern int yyparse();   
     FILE *fileC;
-    int tipoArquivo;
 
     void yyerror(const char *s) {
         fprintf(stderr, "%s\n", s);
