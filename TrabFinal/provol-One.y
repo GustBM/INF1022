@@ -79,7 +79,9 @@
                     char *var = strtok(e->elemento.var1, " ");
                     while (var != NULL) 
                     {
-                        fprintf(arqOut, "%s = int(input(\"%s :\"))\n\n",var, var);   
+                        fprintf(arqOut, "int %s;\n", var);                      
+                        fprintf(arqOut, "printf(\"Entrada [%s]:\");\n", var);   
+                        fprintf(arqOut, "scanf(\"%s\",&%s);\n", "%d", var);       
                         var = strtok(NULL, " ");
                     }
 
