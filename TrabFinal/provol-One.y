@@ -128,7 +128,6 @@
     */
     void criaCodigoC(Elemento *e) {
         iniciarArquivo();
-        printf("SOCORRO");
         fprintf(fileC, "#include <stdio.h>\nvoid main() {\n");
         while (e != NULL) {
             switch (e->linha.comando) {
@@ -240,6 +239,7 @@
 %%
 
 program : ENTRADA varlist SAIDA varlist cmds FIM {
+    printf("SOCORRO");
     Elemento *e = (Elemento *)malloc(sizeof(Elemento));
     if (e == NULL) {printf("Erro no while!\n");exit(-1);}
     e->linha.var1 = $2;
