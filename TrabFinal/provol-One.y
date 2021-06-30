@@ -262,7 +262,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
         $$ = e;
     }
 
-    | INC ABREPAR ID FECHAPAR { 
+    | INC PARABRE ID PARFECHA { 
         Elemento *e = (Elemento *)malloc(sizeof(Elemento));
         if (e == NULL) {printf("Erro na incrementacao!\n");exit(-1);}
         e->linha.var1 = $3;
@@ -270,7 +270,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
         $$ = e;
     }
 
-    | ZERA ABREPAR ID FECHAPAR { 
+    | ZERA PARABRE ID PARFECHA { 
         Elemento *e = (Elemento *)malloc(sizeof(Elemento));
         if (e == NULL) {printf("Erro no zerar!\n");exit(-1);}
         e->linha.var1 = $3;
