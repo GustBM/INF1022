@@ -3,16 +3,17 @@
 
 
 %{
-    #define CENTRADA 0
-    #define CFIM 1
-    #define CINC 2
-    #define CZERA 3
-    #define CATT 4
-    #define CSE 5
-    #define CSENAO 6
-    #define CENQUANTO 7
-    #define CREP 8
-    #define CEND 9
+    
+    #define COMANDOENTRADA 0
+    #define COMANDOFIM 1
+    #define COMANDOINC 2
+    #define COMANDOZERA 3
+    #define COMANDOATT 4
+    #define COMANDOSE 5
+    #define COMANDOSENAO 6
+    #define COMANDOENQUANTO 7
+    #define COMANDOREP 8
+    #define COMANDOEND 9
 
     #include <stdio.h>
     #include <stdlib.h>
@@ -22,26 +23,31 @@
     extern int yylex();
     extern int yyparse();
     extern FILE *yyin;
-    FILE *arqOut;
+    FILE *outputFile;
 
-    typedef struct linha Linha;
-    struct linha
+
+    //comandos e suas variaveis
+    typedef struct line Line;
+    struct line
     {
         int comando;
         char *var1;
         char *var2;
     };
 
+    //lista encadeada para os comandos
     typedef struct lista Lista;
     struct lista 
     {
         Lista *prev;
         Lista *next;
-        Linha elemento;
+        Line elemento;
     };
 
     void insereFinal(Lista *el, Lista *primeiro) 
-    {   
+    {
+
+        
         Lista *ultimo = primeiro;
         while (ultimo->next != NULL) 
         {
@@ -65,88 +71,82 @@
         {
             switch (e->elemento.comando) 
             {
-                case CENTRADA:
+                case COMANDOENTRADA:
                 {
+
                     char *var = strtok(e->elemento.var1, " ");
                     while (var != NULL) 
                     {
-                        fprintf(arqOut, "int %s;\n", var);                      
-                        fprintf(arqOut, "printf(\"Entrada [%s]:\");\n", var);   
-                        fprintf(arqOut, "scanf(\"%s\",&%s);\n", "%d", var);       
+                        fprintf(outputFile, "int %s;\n", var);                      
+                        fprintf(outputFile, "printf(\"Input %s:\");\n", var);   
+                        fprintf(outputFile, "scanf(\"%s\",&%s);\n", "%d", var);       
                         var = strtok(NULL, " ");
                     }
 
                     var = strtok(e->elemento.var2, " ");
                     while (var != NULL) 
                     {
-                        fprintf(arqOut, "%s = 0\n", var);      
+                        fprintf(outputFile, "%s = 0\n", var);      
                         var = strtok(NULL, " ");               
                     }
                     break;
                 }
-                case CFIM:
+                case COMANDOFIM:
                 {
                     char *var = strtok(e->elemento.var1, " ");  
                     while (var != NULL) 
                     {
-                        fprintf(arqOut, "printf(\"%s = %s\\n\" , %s);\n", var, "%d", var);
+                        fprintf(outputFile, "printf(\"%s = %s\\n\" , %s);\n", var, "%d", var);
                         var = strtok(NULL, " ");
                     }
                     break;
                 }
-                case CINC:
+                case COMANDOINC:
                 {
-                    // Incrementa var em 1
-                    fprintf(arqOut, "%s ++;\n", e->elemento.var1);
+                    fprintf(outputFile, "%s ++;\n", e->elemento.var1);
                     break;
                 }
-                case CZERA:
+                case COMANDOZERA:
                 {
-                    // Atualiza o valor de var para zero
-                    fprintf(arqOut, "%s = 0;\n", e->elemento.var1);
+                    fprintf(outputFile, "%s = 0;\n", e->elemento.var1);
                     break;
                 }
-                case CATT:
+                case COMANDOATT:
                 {
-                    // Atribui o valor de var2 a var1
-                    fprintf(arqOut, "%s=%s;\n", e->elemento.var1, e->elemento.var2);
+                    fprintf(outputFile, "%s=%s;\n", e->elemento.var1, e->elemento.var2);
                     break;
                 }
-                case CSE:
+                case COMANDOSE:
                 {
-                    // Testa se var1 > 0
-                    fprintf(arqOut, "if (%s > 0){\n	", e->elemento.var1);
+                    fprintf(outputFile, "if (%s > 0){\n	", e->elemento.var1);
                     break;
                 }
-                case CSENAO:
+                case COMANDOSENAO:
                 {
-                    // Else
-                    fprintf(arqOut, "else{\n");
+                    fprintf(outputFile, "else{\n");
                     break;
                 }
-                case CENQUANTO:
+                case COMANDOENQUANTO:
                 {
-                    // Enquanto var1 > 0
-                    fprintf(arqOut, "while (%s > 0){\n", e->elemento.var1);
+                    fprintf(outputFile, "while (%s > 0){\n", e->elemento.var1);
                     
                     break;
                 }
-                case CREP:
+                case COMANDOREP:
                 {
-                    // Repete cmd var1 vezes
-                    fprintf(arqOut, "int i;\nfor(i=0;i<%s;i++;){\n", e->elemento.var1);
+                    fprintf(outputFile, "int i;\nfor(i=0;i<%s;i++;){\n", e->elemento.var1);
                     
                     break;
                 }
-                case CEND:
+                case COMANDOEND:
                 { 
-                    fprintf(arqOut, "}\n");
+                    fprintf(outputFile, "}\n");
                     break;
                 }
             }
             e = e->next;
         }
-        fclose(arqOut);
+        fclose(outputFile);
     }
 
     void yyerror(const char *s) 
@@ -169,8 +169,8 @@
 %token FACA
 %token INC
 %token ZERA
-%token FECHAPAR
-%token ABREPAR
+%token PARFECHA
+%token PARABRE
 %token IGUAL
 %token ENQUANTO
 %token <sval> ID
@@ -198,10 +198,10 @@ program
             exit(-1);
         }
 
-        el1->elemento.comando = CENTRADA;
+        el1->elemento.comando = COMANDOENTRADA;
         el1->elemento.var1 = $2;
         el1->elemento.var2 = $4;
-        el2->elemento.comando = CFIM;
+        el2->elemento.comando = COMANDOFIM;
         el2->elemento.var1 = $4;
 
         insereInicio(el1, $5);
@@ -249,11 +249,11 @@ cmd :
 
         el1->elemento.var1 = $1;
         el1->elemento.var2 = $3;
-        el1->elemento.comando = CATT;
+        el1->elemento.comando = COMANDOATT;
         $$ = el1;
     }
 
-    | INC ABREPAR ID FECHAPAR 
+    | INC PARABRE ID PARFECHA 
     { 
         Lista *el1= (Lista *)malloc(sizeof(Lista));
         if (el1 == NULL) 
@@ -263,11 +263,11 @@ cmd :
         }
 
         el1->elemento.var1 = $3;
-        el1->elemento.comando = CINC;
+        el1->elemento.comando = COMANDOINC;
         $$ = el1;
     }
 
-    | ZERA ABREPAR ID FECHAPAR 
+    | ZERA PARABRE ID PARFECHA
     { 
         Lista *el1= (Lista *)malloc(sizeof(Lista));
         if (el1 == NULL) 
@@ -277,7 +277,7 @@ cmd :
         }
         
         el1->elemento.var1 = $3;
-        el1->elemento.comando = CZERA;
+        el1->elemento.comando = COMANDOZERA;
         $$ = el1;
     }
 
@@ -292,8 +292,8 @@ cmd :
         }
 
         el1->elemento.var1 = $2;
-        el1->elemento.comando = CREP;
-        el2->elemento.comando = CEND;
+        el1->elemento.comando = COMANDOREP;
+        el2->elemento.comando = COMANDOEND;
 
         insereFinal($4, el1);
         insereFinal(el2,el1);
@@ -310,9 +310,9 @@ cmd :
             exit(-1);
         }
         
-        el1->elemento.comando = CSE;
+        el1->elemento.comando = COMANDOSE;
         el1->elemento.var1 = $2;
-        el2->elemento.comando = CEND;
+        el2->elemento.comando = COMANDOEND;
 
         insereFinal($3, el1);
         insereFinal(el2,el1);
@@ -332,9 +332,9 @@ cmd :
         }
 
         el1->elemento.var1 = $2;
-        el1->elemento.comando = CSE;
-        el2->elemento.comando = CSENAO;
-        el3->elemento.comando = CEND;
+        el1->elemento.comando = COMANDOSE;
+        el2->elemento.comando = COMANDOSENAO;
+        el3->elemento.comando = COMANDOEND;
 
         insereFinal($3, el1);
         insereFinal(el2, el1);
@@ -355,8 +355,8 @@ cmd :
         }
 
         el1->elemento.var1 = $2;
-        el1->elemento.comando = CENQUANTO;
-        el2->elemento.comando = CEND;
+        el1->elemento.comando = COMANDOENQUANTO;
+        el2->elemento.comando = COMANDOEND;
 
         insereFinal($4, el1);
         insereFinal(el2,el1);
@@ -367,32 +367,31 @@ cmd :
 
 int main(int argc, char **argv) 
 {
+    // Passar como argumentos os nomes dos arquivos
+    // de entrada e saida
     if (argc != 3) 
     {
-        printf("provol-One: <Arquivo de Entrada> <Arquivo de Saida>");
+        printf("\nNumero incorreto de argumentos\n");
         exit(-1);
     }
-    printf("Programa iniciado \n");
 
-    printf("Abrindo arquivo %s...", argv[1]);
-    FILE *arqIn = fopen(argv[1], "r");
-    if (arqIn == NULL) {
+    // Abre o arquivo de entrada
+    FILE *inputFile = fopen(argv[1], "r");
+    if (inputFile == NULL) {
         printf("Erro abrindo arquivo de entrada\n");
         exit(-3);
     }
     
-    printf("Arquivo %s aberto \n", argv[1]);
-    printf("Abrindo arquivo %s...", argv[2]);
-    arqOut = fopen(argv[2], "w+");
+    // Abre o arquivo de saida
+    outputFile = fopen(argv[2], "w+");
     
-    if (arqOut == NULL) 
+    if (outputFile == NULL) 
     {
         printf("Erro na criacao do arquivo de saida\n");
         exit(-1);
     }
-    printf("Arquivo %s aberto \n", argv[2]);
-    
-    yyin = arqIn;
+
+    yyin = inputFile;
     yyparse();
     return 0;
 }
