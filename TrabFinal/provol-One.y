@@ -10,7 +10,8 @@
     #define Compile_SE 7
     #define Compile_SENAO 8
     #define Compile_END 100
-
+    #define comando_t short
+    
     #include <stdio.h>
     #include <stdlib.h>
     #include <errno.h>
@@ -177,8 +178,8 @@
 %token FACA
 %token INC
 %token ZERA
-%token FECHAPAR
-%token ABREPAR
+%token PARFECHA
+%token PARABRE
 %token IGUAL
 %token <sval> ID
 %token VEZES
