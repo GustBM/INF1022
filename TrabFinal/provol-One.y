@@ -11,8 +11,9 @@
 %}
 
 %union{
-	char name[20];
+    char name[20];
     int number;
+    char* content;
 }
 
 %token ENTRADA
@@ -30,8 +31,8 @@
 %token <name> id
 %type <number> program
 %type <number> varlist
-%type <number> cmds
-%type <number> cmd
+%type <content> cmds
+%type <content> cmd
 
 %%
 
@@ -66,6 +67,9 @@ cmds : cmds cmd {}
     ;
 
 cmd : ENQUANTO id FACA cmds FIM {
+	fprintf(outFile, "while (%s > 0) {\n", $2);
+	?????
+	fprintf(outFile, "}\n");
 
    }
    |ID IGUAL ID { 
@@ -73,10 +77,10 @@ cmd : ENQUANTO id FACA cmds FIM {
 	fprintf(outFile, "%s = %s;\n", $1, $3);
    }
    |INC ABREPAR ID FECHAPAR{
-   	fprintf(outFile, "%s++;",$3);
+   	fprintf(outFile, "%s++;\n",$3);
    }
    |ZERA ABREPAR ID FECHAPAR { 
-        fprintf(outFile, "%s=0;",$3);
+        fprintf(outFile, "%s=0;\n",$3);
    }
 ;
 %%
