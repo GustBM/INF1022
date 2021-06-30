@@ -73,7 +73,10 @@ cmd : ENQUANTO id FACA cmds FIM {
 	fprintf(outFile, "%s = %s;\n", $1, $3);
    }
    |INC ABREPAR ID FECHAPAR{
-   	fprintf(outFile, "%s++",$3);
+   	fprintf(outFile, "%s++;",$3);
+   }
+   |ZERA ABREPAR ID FECHAPAR { 
+        fprintf(outFile, "%s=0;",$3);
    }
 ;
 %%
