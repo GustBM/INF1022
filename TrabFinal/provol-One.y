@@ -367,29 +367,30 @@ cmd :
 
 int main(int argc, char **argv) 
 {
-    // Passar como argumentos os nomes dos arquivos
-    // de entrada e saida
     if (argc != 3) 
     {
-        printf("\nNumero incorreto de argumentos\n");
+        printf("provol-One: <Arquivo de Entrada> <Arquivo de Saida>");
         exit(-1);
     }
+    printf("Programa iniciado \n");
 
-    // Abre o arquivo de entrada
+    printf("Abrindo arquivo %s...", argv[1]);
     FILE *inputFile = fopen(argv[1], "r");
     if (inputFile == NULL) {
         printf("Erro abrindo arquivo de entrada\n");
         exit(-3);
     }
-    
-    // Abre o arquivo de saida
+
+    printf("Arquivo %s aberto \n", argv[1]);
+    printf("Abrindo arquivo %s...", argv[2]);
     outputFile = fopen(argv[2], "w+");
-    
+
     if (outputFile == NULL) 
     {
         printf("Erro na criacao do arquivo de saida\n");
         exit(-1);
     }
+    printf("Arquivo %s aberto \n", argv[2]);
 
     yyin = inputFile;
     yyparse();
