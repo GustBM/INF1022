@@ -37,7 +37,22 @@
 
 program : ENTRADA varlist SAIDA varlist cmds FIM 
 {
-
+	char* entradas= $2
+	char* saidas = $4
+	char* varEntrada = strtok(entradas, " ");
+	int i=0;
+	while (varEntrada != NULL) {
+                       
+                        fprintf(outFile, "int %s;\n", varEntrada);                   
+                        fprintf(outFile, "int %s =  ", varEntrada, argv[i])
+                        i++;
+                        variEntrada = strtok(NULL, " ");
+                    }
+	char* varSaida = strtok(saidas, " ");
+        while (varSaida != NULL) {
+        	fprintf(outFile, "int %s = 0;\n", varSaida);      
+                varSaida = strtok(NULL, " ");               
+        }
 };
 
 varlist : varlist id {} 
@@ -48,7 +63,9 @@ cmds : cmds cmd {}
     | cmd { $$ = $1; }
     ;
 
-cmd : ENQUANTO id FACA cmds FIM {};
+cmd : ENQUANTO id FACA cmds FIM {
+
+};
 
 %%
 
