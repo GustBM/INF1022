@@ -1,5 +1,5 @@
 %{
-  #include <string.h>
+  #include <stdio.h>
   #include "provol-One.tab.h"
 
   void showError();
@@ -7,7 +7,7 @@
 %}
 %option noyywrap
 %%
-ENTRADA         { return ENTRADA; }
+ENTRADA         { return ENTRADA;}
 SAIDA           { return SAIDA; }
 FIM             { return FIM; }
 FACA            { return FACA; }
@@ -19,7 +19,7 @@ INC             { return INC; }
 ZERA            { return ZERA; }
 ABREPAR         { return ABREPAR; }
 FECHAPAR        { return FECHAPAR; }
-[a-zA-Z]+       { return ID; }
+[a-zA-Z]+       { yylval.content=strdup(yytext); return ID;}
 "="             { return IGUAL;}
 .               { showError();}
 %%

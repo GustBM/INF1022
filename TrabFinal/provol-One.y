@@ -42,7 +42,7 @@
 
 program: ENTRADA varlist SAIDA varlist cmds FIM 
 {
-    printf("teste");
+    printf("1\n");
 	char* entradas= $2;
 	char* saidas = $4;
 	char* varEntrada = strtok(entradas, " ");
@@ -62,28 +62,38 @@ program: ENTRADA varlist SAIDA varlist cmds FIM
     }
 };
 
-varlist: varlist ID {} 
+varlist: varlist ID {
+    printf("2\n");
+    char buffer[100];
+        snprintf(buffer, 100, "%s %s", $1, $2);
+        $$ = buffer;
+} 
     | ID {$$ = $1;}
     ;
 
-cmds: cmds cmd {}
+cmds: cmds cmd {
+    printf("3\n");
+}
     | cmd { $$ = $1; }
     ;
 
 cmd: ENQUANTO ID FACA cmds FIM {
+    printf("4\n");
 	fprintf(outFile, "while (%s > 0) {\n", $2);
 	
 	fprintf(outFile, "}\n");
 
    }
    | ID IGUAL ID { 
-        
+        printf("5\n");
 	fprintf(outFile, "%s = %s;\n", $1, $3);
    }
    |INC ABREPAR ID FECHAPAR{
+       printf("6\n");
    	fprintf(outFile, "%s++;\n",$3);
    }
    |ZERA ABREPAR ID FECHAPAR { 
+       printf("7\n");
     fprintf(outFile, "%s=0;\n",$3);
    }
 ;
