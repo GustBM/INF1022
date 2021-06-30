@@ -8,6 +8,7 @@
     extern FILE *yyin;
     extern int yyparse();   
     FILE *outFile;
+    char* varArray[2];
 %}
 
 %union{
@@ -26,53 +27,54 @@
 %token SENAO
 %token INC
 %token ZERA
-%token EQ
+%token IGUAL
+%token ABREPAR
+%token FECHAPAR
 
-%token <name> id
+%token <name> ID
 %type <number> program
-%type <number> varlist
+%type <content> varlist
 %type <content> cmds
 %type <content> cmd
 
 %%
 
-program : ENTRADA varlist SAIDA varlist cmds FIM 
+program: ENTRADA varlist SAIDA varlist cmds FIM 
 {
-	char* entradas= $2
-	char* saidas = $4
+	char* entradas= $2;
+	char* saidas = $4;
 	char* varEntrada = strtok(entradas, " ");
 	int i=0;
 	while (varEntrada != NULL) {
-                       
-                        fprintf(outFile, "int %s;\n", varEntrada);                   
-                        fprintf(outFile, "int %s =  ", varEntrada, argv[i])
-                        i++;
-                        variEntrada = strtok(NULL, " ");
-                    }
+        fprintf(outFile, "int %s;\n", varEntrada);                   
+        fprintf(outFile, "int %s = %s", varEntrada, varArray[i]);
+        i++;
+        varEntrada = strtok(NULL, " ");
+    }
 	char* varSaida = strtok(saidas, " ");
 	int j=0;
-        while (varSaida != NULL) {
-        	fprintf(outFile, "int %s = 0;\n", varSaida);
-		j++;
-                varSaida = strtok(NULL, " ");               
-        }
+    while (varSaida != NULL) {
+        fprintf(outFile, "int %s = 0;\n", varSaida);
+        j++;
+        varSaida = strtok(NULL, " ");               
+    }
 };
 
-varlist : varlist id {} 
-    | id {$$ = $1;}
+varlist: varlist ID {} 
+    | ID {$$ = $1;}
     ;
 
-cmds : cmds cmd {}
+cmds: cmds cmd {}
     | cmd { $$ = $1; }
     ;
 
-cmd : ENQUANTO id FACA cmds FIM {
+cmd: ENQUANTO ID FACA cmds FIM {
 	fprintf(outFile, "while (%s > 0) {\n", $2);
-	?????
+	
 	fprintf(outFile, "}\n");
 
    }
-   |ID IGUAL ID { 
+   | ID IGUAL ID { 
         
 	fprintf(outFile, "%s = %s;\n", $1, $3);
    }
@@ -85,6 +87,8 @@ cmd : ENQUANTO id FACA cmds FIM {
 ;
 %%
 
+
+
 int yyerror(char *s)
 {
 	printf("Syntax Error on line %s\n", s);
@@ -93,8 +97,8 @@ int yyerror(char *s)
 
 int main(int argc, char **argv)
 {
-    if (argc != 2) {
-        printf("provol-One: <Arquivo de Entrada> <Arquivo de Saida>");
+    if (argc != 4) {
+        printf("provol-One: <Arquivo de Entrada> <Arquivo de Saida> <valor 1> <valor 2>");
         exit(-1);
     }
 
@@ -110,7 +114,8 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
-    fprintf(fileC, "teste\n");
+    varArray[0] = argv[3];
+    varArray[1] = argv[4];
 
     yyparse();
 

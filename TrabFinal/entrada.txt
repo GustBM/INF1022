@@ -1,0 +1,6 @@
+program 
+ENTRADA X Y 
+SAIDA Z 
+Z =Y 
+INC(Z) 
+FIM
