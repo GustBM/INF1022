@@ -1,16 +1,17 @@
 %{
-
-    #define Compile_ENTRADA 0
-    #define Compile_FINAL 1
-    #define Compile_INCREMENTA 2
-    #define Compile_ZERA 3
-    #define Compile_ENQUANTO 4
-    #define Compile_ATRIBUICAO 5
-    #define Compile_REPETICAO 6
-    #define Compile_SE 7
-    #define Compile_SENAO 8
-    #define Compile_END 100
+    #define COMANDO_ENTRADA 0
+    #define COMANDO_FINAL 1
+    #define COMANDO_INCREMENTA 2
+    #define COMANDO_ZERA 3
+    #define COMANDO_ENQUANTO 4
+    #define COMANDO_ATRIBUICAO 5
+    #define COMANDO_REPETICAO 6
+    #define COMANDO_SE 7
+    #define COMANDO_SENAO 8
+    #define COMANDO_END 100
     #define comando_t short
+
+    #define LINGUAGEM_C 1
     
     #include <stdio.h>
     #include <stdlib.h>
@@ -31,6 +32,10 @@
         Linha linha;
     };
 
+    /*
+        Insere o elemento 'e' no final da lista cujo primeiro
+        elemento é o 'lista'.
+    */
     void insereElementoFinal(Elemento *e, Elemento *lista) {
         // andando ate o final
         Elemento *ultimo = lista;
@@ -42,8 +47,14 @@
         return;
     }
 
+    /*
+        Insere o elemento 'e' (e todos os elementos seguintes dele) 
+        no inicio da lista cujo primeiro elemento é o 'lista'
+    */
     void insereElementoInicio(Elemento *e, Elemento *lista) {
+        //andando ate o final do e
         Elemento *ultimo = e;
+
         while (ultimo->next != NULL) {
             ultimo = ultimo->next;
         }
@@ -51,25 +62,43 @@
         lista->prev = e;
     }
 
+    /*
+        Exibe cada linha da lista encadeada, para testes
+    */
+    void exibeLinhas(Elemento *e) {
+        while (e != NULL) {
+            printf("%d [[%s]] [[%s]]\n", e->linha.comando, e->linha.var1, e->linha.var2);
+            e = e->next;
+        }
+    }
+
     extern int yylex();
-    extern FILE *yyin;      
+    extern FILE *yyin;      // arquivo de entrada 
     extern int yyparse();   
     FILE *fileC;
+    int tipoArquivo;
 
     void yyerror(const char *s) {
         fprintf(stderr, "%s\n", s);
         exit(errno);
     };
 
-    void openFile() {
+    /*
+        Abre o arquivo e salva o FILE na variavel "fileC" global
+    */
+    void iniciarArquivo() {
+        
         fileC = fopen("resultado.c", "w+");
         if (fileC == NULL) {
-            printf("Houve um problema na criacao do arquivo\n");
+            printf("Erro na criacao do arquivo temporario .c!\n");
             exit(-1);
         }
     }
 
-    void closeFile() {
+    /*
+        Fecha o arquivo na variavel global "fileC"
+    */
+    void fecharArquivo() {
         fclose(fileC);
         return;
     }
@@ -89,32 +118,40 @@
         return tabs;
     }
 
-        void criaCodigoC(Elemento *e) {
-        openFile();
+    /*
+        A seguir estao as funcoes que geram o código a partir do primeiro elemento
+        da lista encadeada.
+        criaCodigoLua
+        criaCodigoJava
+        criaCodigoPython
+        criaCodigoC
+    */
+    void criaCodigoC(Elemento *e) {
+        iniciarArquivo();
         fprintf(fileC, "#include <stdio.h>\nvoid main() {\n");
         while (e != NULL) {
             switch (e->linha.comando) {
-                case Compile_ATRIBUICAO: {
+                case COMANDO_ATRIBUICAO: {
                     fprintf(fileC, "%s = %s;\n", e->linha.var1, e->linha.var2);
                     break;
                 }
-                case Compile_ZERA: {
+                case COMANDO_ZERA: {
                     fprintf(fileC, "%s = 0;\n", e->linha.var1);
                     break;
                 }
-                case Compile_INCREMENTA: {
+                case COMANDO_INCREMENTA: {
                     fprintf(fileC, "%s++;\n", e->linha.var1);
                     break;
                 }
-                case Compile_ENQUANTO: {
+                case COMANDO_ENQUANTO: {
                     fprintf(fileC, "while (%s > 0) {\n", e->linha.var1);
                     break;
                 }
-                case Compile_END: {
+                case COMANDO_END: {
                     fprintf(fileC, "}\n"); 
                     break;
                 }
-                case Compile_FINAL: {
+                case COMANDO_FINAL: {
                     // var1 eh a lista de variaveis
                     // splitando a lista de strings
                     
@@ -126,7 +163,7 @@
                     fprintf(fileC, "return;}"); // coloca as ultimas linhas
                     break;
                 }
-                case Compile_ENTRADA: {
+                case COMANDO_ENTRADA: {
                     // var1 eh a lista de variaveis a serem iniciadas
                     // splitando a lista de strings
                     char *variavel = strtok(e->linha.var1, " ");
@@ -148,24 +185,24 @@
                     }
                     break;
                 }
-                case Compile_REPETICAO: {
+                case COMANDO_REPETICAO: {
                     fprintf(fileC, "for (int _i = 0; _i<%s; _i++) {\n", e->linha.var1);
                     break;
                 }
 
-                case Compile_SE: {
+                case COMANDO_SE: {
                     fprintf(fileC, "if (%s){ ", e->linha.var1);
                     break;
                 }
 
-                case Compile_SENAO: {
+                case COMANDO_SENAO: {
                     fprintf(fileC, "} else {\n");
                     break;
                 }
             }
             e = e->next;
         }
-        closeFile();
+        fecharArquivo();
     }
 
 %}
@@ -206,17 +243,18 @@ program : ENTRADA varlist SAIDA varlist cmds FIM {
     if (e == NULL) {printf("Erro no while!\n");exit(-1);}
     e->linha.var1 = $2;
     e->linha.var2 = $4;
-    e->linha.comando = Compile_ENTRADA;
+    e->linha.comando = COMANDO_ENTRADA;
     insereElementoInicio(e, $5);
 
     Elemento *ee = (Elemento *)malloc(sizeof(Elemento));
     if (ee == NULL) {printf("Erro no while!\n");exit(-1);}
     ee->linha.var1 = $4;
-    ee->linha.comando = Compile_FINAL;
+    ee->linha.comando = COMANDO_FINAL;
     insereElementoFinal(ee, e);
     
+
     criaCodigoC(e);
-   
+    
 }
     ;
 
@@ -240,13 +278,13 @@ cmd : ENQUANTO ID FACA cmds FIM {
     if (e == NULL) {printf("Erro no while!\n");exit(-1);}
 
     e->linha.var1 = $2;
-    e->linha.comando = Compile_ENQUANTO;
+    e->linha.comando = COMANDO_ENQUANTO;
     insereElementoFinal($4, e);
 
     Elemento *ee = (Elemento *)malloc(sizeof(Elemento));
     if (ee == NULL) {printf("Erro no while!\n");exit(-1);}
     
-    ee->linha.comando = Compile_END;
+    ee->linha.comando = COMANDO_END;
     insereElementoFinal(ee,e);
     $$ = e;
  }
@@ -257,7 +295,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
 
         e->linha.var1 = $1;
         e->linha.var2 = $3;
-        e->linha.comando = Compile_ATRIBUICAO;
+        e->linha.comando = COMANDO_ATRIBUICAO;
         $$ = e;
     }
 
@@ -265,7 +303,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
         Elemento *e = (Elemento *)malloc(sizeof(Elemento));
         if (e == NULL) {printf("Erro na incrementacao!\n");exit(-1);}
         e->linha.var1 = $3;
-        e->linha.comando = Compile_INCREMENTA;
+        e->linha.comando = COMANDO_INCREMENTA;
         $$ = e;
     }
 
@@ -273,7 +311,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
         Elemento *e = (Elemento *)malloc(sizeof(Elemento));
         if (e == NULL) {printf("Erro no zerar!\n");exit(-1);}
         e->linha.var1 = $3;
-        e->linha.comando = Compile_ZERA;
+        e->linha.comando = COMANDO_ZERA;
         $$ = e;
     }
 
@@ -283,13 +321,13 @@ cmd : ENQUANTO ID FACA cmds FIM {
         if (e == NULL) {printf("Erro no VEZES!\n");exit(-1);}
 
         e->linha.var1 = $2;
-        e->linha.comando = Compile_REPETICAO;
+        e->linha.comando = COMANDO_REPETICAO;
         insereElementoFinal($4, e);
 
         Elemento *ee = (Elemento *)malloc(sizeof(Elemento));
         if (ee == NULL) {printf("Erro no while!\n");exit(-1);}
     
-        ee->linha.comando = Compile_END;
+        ee->linha.comando = COMANDO_END;
         insereElementoFinal(ee,e);
         $$ = e;
     }
@@ -299,7 +337,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
         Elemento *e = (Elemento*)malloc(sizeof(Elemento ));
         if (e == NULL) {printf("Erro no VEZES!\n");exit(-1);}
         
-        e->linha.comando = Compile_SE;
+        e->linha.comando = COMANDO_SE;
         e->linha.var1 = $2;
 
         insereElementoFinal($3, e);
@@ -307,7 +345,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
         Elemento *ee = (Elemento *)malloc(sizeof(Elemento));
         if (ee == NULL) {printf("Erro no while!\n");exit(-1);}
     
-        ee->linha.comando = Compile_END;
+        ee->linha.comando = COMANDO_END;
         insereElementoFinal(ee,e);
         $$ = e;
         
@@ -319,20 +357,20 @@ cmd : ENQUANTO ID FACA cmds FIM {
         if (e == NULL) {printf("Erro no SE-SENAO!\n");exit(-1);}
 
         e->linha.var1 = $2;
-        e->linha.comando = Compile_SE;
+        e->linha.comando = COMANDO_SE;
         insereElementoFinal($3, e);
 
         Elemento *ee = (Elemento *)malloc(sizeof(Elemento));
         if (ee == NULL) {printf("Erro no SE-SENAO!\n");exit(-1);}
 
-        ee->linha.comando = Compile_SENAO;
+        ee->linha.comando = COMANDO_SENAO;
         insereElementoFinal(ee, e);
         insereElementoFinal($5, e);
 
         Elemento *eee = (Elemento *)malloc(sizeof(Elemento));
         if (eee == NULL) {printf("Erro no SE-SENAO!\n");exit(-1);}
 
-        eee->linha.comando = Compile_END;
+        eee->linha.comando = COMANDO_END;
         insereElementoFinal(eee, e);
 
         $$ = e;
@@ -342,6 +380,7 @@ cmd : ENQUANTO ID FACA cmds FIM {
 
 
 int main(int argc, char **argv) {
+    /* faz a leitura dos argumentos */
     if (argc != 2) {
         printf("Uso correto: %s arquivo.provolone", argv[0]);
         exit(-1);
@@ -351,8 +390,13 @@ int main(int argc, char **argv) {
         printf("Erro abrindo arquivo de leitura!\n");
         exit(-3);
     }
- 
-    openFile();
+    printf("Linguagem usada: C\n");
+    
+    
+    = LINGUAGEM_C; 
+    
+    /* abre o arquivo final para salvar o código */
+    iniciarArquivo();
 
     printf("Executando parser\n");
     yyin = arquivoInput;
