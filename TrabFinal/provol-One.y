@@ -3,8 +3,6 @@
 
 
 %{
-    // Foi adicionado uma letra "C" antes da acao para 
-    // diferencia-la do token definido mais a frente
     #define CENTRADA 0
     #define CFIM 1
     #define CINC 2
@@ -43,10 +41,7 @@
     };
 
     void insereFinal(Lista *el, Lista *primeiro) 
-    {
-        // Insere o elemento "el" no apos percorrer ate o final
-        // do primeiro item dado.
-        
+    {   
         Lista *ultimo = primeiro;
         while (ultimo->next != NULL) 
         {
@@ -59,7 +54,6 @@
 
     void insereInicio(Lista *el, Lista *primeiro) 
     {
-        // Insere elemento "el" antes do primeiro item dado
         el->next = primeiro;
         primeiro->prev = el;
     }
@@ -73,9 +67,6 @@
             {
                 case CENTRADA:
                 {
-                    // Tentamos utilizar dos parametros argv[] para popular as variaveis do programa, porem nao 
-                    // conseguimos deixar funcional antes da entrega. Portanto utilizamos simplesmente um input
-                    // no programa resultante.
                     char *var = strtok(e->elemento.var1, " ");
                     while (var != NULL) 
                     {
@@ -178,8 +169,8 @@
 %token FACA
 %token INC
 %token ZERA
-%token FPAR
-%token APAR
+%token FECHAPAR
+%token ABREPAR
 %token IGUAL
 %token ENQUANTO
 %token <sval> ID
@@ -262,7 +253,7 @@ cmd :
         $$ = el1;
     }
 
-    | INC APAR ID FPAR 
+    | INC ABREPAR ID FECHAPAR 
     { 
         Lista *el1= (Lista *)malloc(sizeof(Lista));
         if (el1 == NULL) 
@@ -276,7 +267,7 @@ cmd :
         $$ = el1;
     }
 
-    | ZERA APAR ID FPAR 
+    | ZERA ABREPAR ID FECHAPAR 
     { 
         Lista *el1= (Lista *)malloc(sizeof(Lista));
         if (el1 == NULL) 
@@ -376,22 +367,22 @@ cmd :
 
 int main(int argc, char **argv) 
 {
-    // Passar como argumentos os nomes dos arquivos
-    // de entrada e saida
     if (argc != 3) 
     {
-        printf("\nNumero incorreto de argumentos\n");
+        printf("provol-One: <Arquivo de Entrada> <Arquivo de Saida>");
         exit(-1);
     }
+    printf("Programa iniciado \n");
 
-    // Abre o arquivo de entrada
+    printf("Abrindo arquivo %s...", argv[1]);
     FILE *arqIn = fopen(argv[1], "r");
     if (arqIn == NULL) {
         printf("Erro abrindo arquivo de entrada\n");
         exit(-3);
     }
     
-    // Abre o arquivo de saida
+    printf("Arquivo %s aberto \n", argv[1]);
+    printf("Abrindo arquivo %s...", argv[2]);
     arqOut = fopen(argv[2], "w+");
     
     if (arqOut == NULL) 
@@ -399,7 +390,8 @@ int main(int argc, char **argv)
         printf("Erro na criacao do arquivo de saida\n");
         exit(-1);
     }
-
+    printf("Arquivo %s aberto \n", argv[2]);
+    
     yyin = arqIn;
     yyparse();
     return 0;

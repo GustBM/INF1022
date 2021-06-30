@@ -13,9 +13,15 @@ VEZES       return (VEZES);
 SE          return (SE);
 SENAO       return (SENAO);
 ENQUANTO    return (ENQUANTO);
-"("         return (APAR);
-")"         return (FPAR);
+"("         return (ABREPAR);
+")"         return (FECHAPAR);
 "="         return (IGUAL);
-#.*         {/* comentario */}
+#.*         {showError();}
 [a-zA-Z]    {yylval.sval =strdup(yytext); return (ID);}
 [ /t]       {}
+
+%%
+
+void showError(){
+  printf("Other input\n");
+}
