@@ -391,9 +391,7 @@ int main(int argc, char **argv) {
         exit(-3);
     }
     printf("Linguagem usada: C\n");
-    
-    
-    = LINGUAGEM_C; 
+
     
     /* abre o arquivo final para salvar o código */
     iniciarArquivo();
