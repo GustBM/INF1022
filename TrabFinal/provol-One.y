@@ -76,7 +76,7 @@
     extern FILE *yyin;      // arquivo de entrada 
     extern int yyparse();   
     FILE *fileC;
-    int tipoArquivo;
+    
 
     void yyerror(const char *s) {
         fprintf(stderr, "%s\n", s);
@@ -128,6 +128,7 @@
     */
     void criaCodigoC(Elemento *e) {
         iniciarArquivo();
+        printf("SOCORRO");
         fprintf(fileC, "#include <stdio.h>\nvoid main() {\n");
         while (e != NULL) {
             switch (e->linha.comando) {
