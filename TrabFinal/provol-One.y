@@ -37,10 +37,12 @@
 %type <content> cmds
 %type <content> cmd
 
+%start program
 %%
 
 program: ENTRADA varlist SAIDA varlist cmds FIM 
 {
+    printf("teste");
 	char* entradas= $2;
 	char* saidas = $4;
 	char* varEntrada = strtok(entradas, " ");
@@ -82,12 +84,10 @@ cmd: ENQUANTO ID FACA cmds FIM {
    	fprintf(outFile, "%s++;\n",$3);
    }
    |ZERA ABREPAR ID FECHAPAR { 
-        fprintf(outFile, "%s=0;\n",$3);
+    fprintf(outFile, "%s=0;\n",$3);
    }
 ;
 %%
-
-
 
 int yyerror(char *s)
 {
@@ -97,29 +97,39 @@ int yyerror(char *s)
 
 int main(int argc, char **argv)
 {
-    if (argc != 4) {
+    if (argc != 5) {
         printf("provol-One: <Arquivo de Entrada> <Arquivo de Saida> <valor 1> <valor 2>");
         exit(-1);
     }
+    printf("Programa iniciado \n");
 
+    printf("Abrindo arquivo %s...", argv[1]);
     FILE *arquivoEntrada = fopen(argv[1], "r");
     if (arquivoEntrada == NULL) {
         printf("Erro abrindo arquivo de entrada\n");
         exit(-1);
     }
 
-    FILE *arquivoSaida = fopen(argv[2], "w");
-    if (arquivoSaida == NULL) {
+    printf("Arquivo %s aberto \n", argv[1]);
+    printf("Abrindo arquivo %s...", argv[2]);
+    outFile = fopen(argv[2], "w");
+    if (outFile == NULL) {
         printf("Erro abrindo arquivo de saída\n");
         exit(-1);
     }
+    printf("Arquivo %s aberto \n", argv[2]);
 
     varArray[0] = argv[3];
     varArray[1] = argv[4];
 
+    yyin = arquivoEntrada;
+
+    printf("Iniciando yyparse \n");
     yyparse();
 
     fclose(arquivoEntrada);
-    fclose(arquivoSaida);
+    printf("Fechando Arquivo de entrada \n");
+    fclose(outFile);
+    printf("Fechando Arquivo de entrada \n");
     return 0;
 }

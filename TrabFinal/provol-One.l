@@ -20,10 +20,10 @@ ZERA            { return ZERA; }
 ABREPAR         { return ABREPAR; }
 FECHAPAR        { return FECHAPAR; }
 [a-zA-Z]+       { return ID; }
-\=              { return IGUAL; }
-.               { showError();};
+"="             { return IGUAL;}
+.               { showError();}
 %%
 
 void showError(){
-  printf("Other input");
+  printf("Other input\n");
 }

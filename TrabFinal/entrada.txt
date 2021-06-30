@@ -1,6 +1,5 @@
-program 
 ENTRADA X Y 
 SAIDA Z 
-Z =Y 
+Z=Y 
 INC(Z) 
 FIM
