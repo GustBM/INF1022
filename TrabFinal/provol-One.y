@@ -41,6 +41,7 @@ program : ENTRADA varlist SAIDA varlist cmds FIM
 	char* saidas = $4
 	char* varEntrada = strtok(entradas, " ");
 	int i=0;
+	int argumentosEntrada[argc];
 	while (varEntrada != NULL) {
                        
                         fprintf(outFile, "int %s;\n", varEntrada);                   
@@ -49,8 +50,10 @@ program : ENTRADA varlist SAIDA varlist cmds FIM
                         variEntrada = strtok(NULL, " ");
                     }
 	char* varSaida = strtok(saidas, " ");
+	int j=0;
         while (varSaida != NULL) {
-        	fprintf(outFile, "int %s = 0;\n", varSaida);      
+        	fprintf(outFile, "int %s = 0;\n", varSaida);
+		j++;
                 varSaida = strtok(NULL, " ");               
         }
 };
@@ -66,6 +69,12 @@ cmds : cmds cmd {}
 cmd : ENQUANTO id FACA cmds FIM {
 
 };
+   |ID IGUAL ID { 
+        e->linha.var1 = $1;
+        e->linha.var2 = $3;
+        e->linha.comando = COMANDO_ATRIBUICAO;
+        $$ = e;
+    }
 
 %%
 
